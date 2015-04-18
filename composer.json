@@ -15,5 +15,10 @@
     },
     "support": {
         "email": "support@slobel.ru"
-    }
+    },
+    "autoload": {
+        "psr-0" : {
+            "DmitryMamontov" : "lib/"
+        }
+    },
 }
