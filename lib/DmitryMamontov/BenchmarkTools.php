@@ -42,8 +42,6 @@
  */
 
 namespace DmitryMamontov;
-use DmitryMamontov\Server\Server;
-use DmitryMamontov\Server\FileSystem;
 
 /**
  * BenchmarkTools - The main class
