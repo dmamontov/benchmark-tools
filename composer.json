@@ -9,7 +9,8 @@
     "authors": [
         {
             "name": "Dmitry Mamontov",
-            "email": "hello@slobel.ru"
+            "email": "hello@slobel.ru",
+            "role": "lead"
         }
     ],
     "require": {
@@ -25,7 +26,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0.x-dev"
+            "dev-master": "1.0.0.x-dev"
         }
     }
 }
