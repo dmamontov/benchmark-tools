@@ -1,6 +1,7 @@
 {
     "name": "dmamontov/benchmark-tools",
     "description": "Server benchmark for all that is possible.",
+    "type": "project",
     "keywords": ["Benchmark", "Server"],
     "version": "1.0.0",
     "license": "BSD-4-Clause",
@@ -19,7 +20,7 @@
     },
     "autoload": {
         "psr-0" : {
-            "DmitryMamontov" : "lib/"
+            "DmitryMamontov\\" : "lib/"
         }
     },
     "extra": {
