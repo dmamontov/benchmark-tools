@@ -1,3 +1,5 @@
+[![Latest Stable Version](https://poser.pugx.org/dmamontov/benchmark-tools/v/stable.svg)](https://packagist.org/packages/dmamontov/benchmark-tools)
+[![License](https://poser.pugx.org/dmamontov/benchmark-tools/license.svg)](https://packagist.org/packages/dmamontov/benchmark-tools)
 # Benchmark Tools
 
 Server benchmark for all that is possible.
