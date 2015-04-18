@@ -2,6 +2,7 @@
     "name": "dmamontov/benchmark-tools",
     "description": "Server benchmark for all that is possible.",
     "keywords": ["Benchmark", "Server"],
+    "version": "1.0.0",
     "homepage": "http://www.slobel.ru/",
     "authors": [
         {
