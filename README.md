@@ -1,6 +1,10 @@
 # Benchmark Tools
 
-Server benchmark for all that is possible. [Demonstration](http://slobel.ru/benchmark)
+Server benchmark for all that is possible.
+
+[Demonstration](http://slobel.ru/benchmark)
+
+Example of use can be found in the file [example.php](https://github.com/dmamontov/benchmark-tools/blob/master/example.php).
 
 ## Mandatory requirements
 
