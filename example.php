@@ -68,7 +68,7 @@
     $b->add('Shared Memory', Server::SharedMemory(), null, null, 'Checking Shared Memory.');
     $b->add('Posix', Server::Posix(), null, null, 'Checking posix.');
     $b->add('Pcntl', Server::Pcntl(), null, null, 'Checking pcntl.');
-    $b->add('Email Sanding', Server::EmailSanding(), null, null, 'Checking Messages.');
+    $b->add('Email Sanding', Server::EmailSending(), null, null, 'Checking Messages.');
     $b->add('Mcrypt', Server::Mcrypt(), null, null, 'Checking mcrypt.');
     $b->add('Sockets', Server::Sockets(), null, null, 'Checking sockets.');
     $b->add('PHP Regex', Server::PHPRegex(), null, null, 'Checking php regex.');
