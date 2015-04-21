@@ -38,7 +38,7 @@
  * @author    Dmitry Mamontov <d.slonyara@gmail.com>
  * @copyright 2015 Dmitry Mamontov <d.slonyara@gmail.com>
  * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @since     File available since Release 1.0.0
+ * @since     File available since Release 1.0.1
  */
 namespace DmitryMamontov\Server;
 use DmitryMamontov\Tools\Tools;
@@ -50,9 +50,9 @@ use DmitryMamontov\Server\Server;
  * @author    Dmitry Mamontov <d.slonyara@gmail.com>
  * @copyright 2015 Dmitry Mamontov <d.slonyara@gmail.com>
  * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @version   Release: 1.0.0
+ * @version   Release: 1.0.1
  * @link      https://github.com/dmamontov/benchmark-tools/
- * @since     Class available since Release 1.0.0
+ * @since     Class available since Release 1.0.1
  */
 class FileSystem
 {
@@ -347,11 +347,12 @@ class FileSystem
 
     /**
      * Checking upload files to the server.
+     * @param boolean $big
      * @return boolean
      * @static
      * @final
      */
-    final public static function FileUploads()
+    final public static function FileUploads($big = false)
     {
         if (
             Server::PHPInterface() == 'cli' ||
@@ -380,13 +381,18 @@ class FileSystem
         );
         @fclose($file);
 
+        $text = 'Test upload';
+        if ($big == true) {
+            $text = str_repeat($text, 500000);
+        }
+
         $boundary = sha1(1);
         $file = "--$boundary\r\n" .
                 "Content-Disposition: form-data; name=\"filename\"; filename=\"test.dat\"\r\n" .
                 "Content-Type: text/plain; charset=us-ascii\r\n" .
                 "Content-Length: 11\r\n" .
                 "Content-Type: application/octet-stream\r\n\r\n" .
-                "Test upload\r\n" .
+                "$text\r\n" .
                 "--$boundary--";
         $body = 'POST ' . dirname($_SERVER['PHP_SELF']) . "/test_upload.php?root={$_SERVER['DOCUMENT_ROOT']} HTTP/1.1\r\n" .
                 'Host: ' . Tools::getHost() . "\r\n" .

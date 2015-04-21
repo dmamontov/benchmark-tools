@@ -38,7 +38,7 @@
  * @author    Dmitry Mamontov <d.slonyara@gmail.com>
  * @copyright 2015 Dmitry Mamontov <d.slonyara@gmail.com>
  * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @since     File available since Release 1.0.0
+ * @since     File available since Release 1.0.1
  */
     require_once 'vendor/autoload.php';
 
@@ -77,6 +77,7 @@
     $b->add('GDlib', Server::GDlib(), null, null, 'Checking gdlib.');
     $b->add('Free Type', Server::FreeType(), null, null, 'Checking free type.');
     $b->add('Mbstring', Server::Mbstring(), null, null, 'Checking mbstring.');
+    $b->add('Json', Server::Json(), null, null, 'Checking Json.');
     $b->add('PDO', Server::PDO(), null, null, 'Checking PDO');
     $b->add('SimpleXML', Server::SimpleXML(), null, null, 'Checking SimpleXML');
     $b->add('DOMDocument', Server::DOMDocument(), null, null, 'Checking DOMDocument');
@@ -93,11 +94,14 @@
     $b->addHeader('High Load.');
     $b->add('Actual Memory Limit', HighLoad::ActualMemoryLimit(), 128, '>', 'Checks the actual memory limit.');
     $b->add('Actual Execution Time', HighLoad::ActualExecutionTime(5000), null, null, 'Checks real-time execution of the script.');
+    $b->add('Sending Big Emails', HighLoad::SendingBigEmails(), null, null, 'Checking the sending big emails.');
+    $b->add('Uploads Big File', HighLoad::UploadsBigFile(), null, null, 'Checking upload big files to the server.');
 
     $b->addHeader('Http server.');
     $b->add('Server', Http::Server(), null, null, 'Finds the current http server.');
     $b->add('Authorization', Http::Authorization(), null, null, 'Checks authorization via http.');
     $b->add('Sessions', Http::Sessions(), null, null, 'Checks work sessions via http.');
+    $b->add('Local Redirect', Http::LocalRedirect(), null, null, 'Checks work local redirect via http.');
     $b->add('SSL', Http::SSL('www.google.com'), null, null, 'Checks operation ssl via http.');
 
     $b->addHeader('File system.');
@@ -123,9 +127,10 @@
     ) {
         $db = new DB($platformdb['user'], $platformdb['password'], $platformdb['dbname'], $platformdb['host'], $platformdb['driver']);
 
-        $b->addHeader('Data Base.');
+        $b->addHeader('DataBase.');
         $b->add('Version', $db->Version());
         $b->add('Sql Mode', $db->SqlMode());
+        $b->add('Time Diff', $db->TimeDiff(), null, null, 'Checking the time difference.');
         $b->add('Innodb support', $db->Innodb(), null, null, 'Check support InnoDB.');
         $b->add('MyIsam support', $db->MyIsam(), null, null, 'Check support MyIsam.');
         $b->add('Speed Insert', $db->SpeedInsert(), null, null, 'Speed test insert 1000 records.');

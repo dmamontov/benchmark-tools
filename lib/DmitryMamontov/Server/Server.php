@@ -38,7 +38,7 @@
  * @author    Dmitry Mamontov <d.slonyara@gmail.com>
  * @copyright 2015 Dmitry Mamontov <d.slonyara@gmail.com>
  * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @since     File available since Release 1.0.0
+ * @since     File available since Release 1.0.1
  */
 namespace DmitryMamontov\Server;
 
@@ -48,9 +48,9 @@ namespace DmitryMamontov\Server;
  * @author    Dmitry Mamontov <d.slonyara@gmail.com>
  * @copyright 2015 Dmitry Mamontov <d.slonyara@gmail.com>
  * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @version   Release: 1.0.0
+ * @version   Release: 1.0.1
  * @link      https://github.com/dmamontov/benchmark-tools/
- * @since     Class available since Release 1.0.0
+ * @since     Class available since Release 1.0.1
  */
 class Server
 {
@@ -156,13 +156,14 @@ class Server
 
     /**
      * Checking Messages.
+     * @param string $email
      * @return boolean
      * @static
      * @final
      */
-    final public static function EmailSanding()
+    final public static function EmailSending($email = 'test@test.com')
     {
-        return (bool) mail('test@test.com', 'Server Test', 'Delete it.');
+        return (bool) mail($email, 'Server Test', 'Delete it.');
     }
 
     /**
@@ -273,6 +274,17 @@ class Server
     final public static function SimpleXML()
     {
         return (bool) class_exists('SimpleXMLElement');
+    }
+
+    /**
+     * Checking Json.
+     * @return boolean
+     * @static
+     * @final
+     */
+    final public static function Json()
+    {
+        return (bool) function_exists('json_encode');
     }
 
     /**

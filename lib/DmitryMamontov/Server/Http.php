@@ -38,7 +38,7 @@
  * @author    Dmitry Mamontov <d.slonyara@gmail.com>
  * @copyright 2015 Dmitry Mamontov <d.slonyara@gmail.com>
  * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @since     File available since Release 1.0.0
+ * @since     File available since Release 1.0.1
  */
 namespace DmitryMamontov\Server;
 use DmitryMamontov\Tools\Tools;
@@ -51,9 +51,9 @@ use DmitryMamontov\Server\FileSystem;
  * @author    Dmitry Mamontov <d.slonyara@gmail.com>
  * @copyright 2015 Dmitry Mamontov <d.slonyara@gmail.com>
  * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @version   Release: 1.0.0
+ * @version   Release: 1.0.1
  * @link      https://github.com/dmamontov/benchmark-tools/
- * @since     Class available since Release 1.0.0
+ * @since     Class available since Release 1.0.1
  */
 class Http
 {
@@ -173,6 +173,58 @@ class Http
 
         if (file_exists("{$_SERVER['DOCUMENT_ROOT']}/test_session.php")) {
             @unlink("{$_SERVER['DOCUMENT_ROOT']}/test_session.php");
+        }
+
+        return $result;
+    }
+    
+    /**
+     * Checks work local redirect via http.
+     * @param integer $status
+     * @return boolean
+     * @static
+     * @final
+     */
+    final public static function LocalRedirect($status = 301)
+    {
+        $statuses = array(300, 301, 302, 303, 304, 305, 307);
+
+        if (
+            Server::PHPInterface() == 'cli' ||
+            FileSystem::FileDeletion() === false ||
+            in_array($status, $statuses) == false
+        ) {
+            return false;
+        }
+
+        if (file_exists("{$_SERVER['DOCUMENT_ROOT']}/test_redirect.php")) {
+            @unlink("{$_SERVER['DOCUMENT_ROOT']}/test_redirect.php");
+        }
+
+        $file = @fopen("{$_SERVER['DOCUMENT_ROOT']}/test_redirect.php", 'wb');
+        @fputs(
+            $file,
+            "<?php\n" .
+            "if (\$_GET['local'] != 'Y') {\n" .
+            "    header('Location: ' . dirname(\$_SERVER['PHP_SELF']) . '/test_redirect.php?local=Y', true, $status);\n" .
+            "}\n" .
+            '?>'
+        );
+        @fclose($file);
+
+        $port = $_SERVER['SERVER_PORT'] ? $_SERVER['SERVER_PORT'] : 80;
+        $host = ($port == 443 ? 'https://' : 'http://') . ($_SERVER['SERVER_NAME'] ? $_SERVER['SERVER_NAME'] : 'localhost');
+
+        $result = file_exists("{$_SERVER['DOCUMENT_ROOT']}/test_redirect.php") ?
+                      get_headers($host . dirname($_SERVER['PHP_SELF']) . '/test_redirect.php') :
+                      false;
+
+        if (is_array($result)) {
+            $result = stripos(reset($result), $status) ? true : false;
+        }
+
+        if (file_exists("{$_SERVER['DOCUMENT_ROOT']}/test_redirect.php")) {
+            @unlink("{$_SERVER['DOCUMENT_ROOT']}/test_redirect.php");
         }
 
         return $result;

@@ -38,10 +38,12 @@
  * @author    Dmitry Mamontov <d.slonyara@gmail.com>
  * @copyright 2015 Dmitry Mamontov <d.slonyara@gmail.com>
  * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @since     File available since Release 1.0.0
+ * @since     File available since Release 1.0.1
  */
 
 namespace DmitryMamontov;
+use DmitryMamontov\Server\Server;
+use DmitryMamontov\Server\FileSystem;
 
 /**
  * BenchmarkTools - The main class
@@ -49,9 +51,9 @@ namespace DmitryMamontov;
  * @author    Dmitry Mamontov <d.slonyara@gmail.com>
  * @copyright 2015 Dmitry Mamontov <d.slonyara@gmail.com>
  * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @version   Release: 1.0.0
+ * @version   Release: 1.0.1
  * @link      https://github.com/dmamontov/benchmark-tools/
- * @since     Class available since Release 1.0.0
+ * @since     Class available since Release 1.0.1
  */
 class BenchmarkTools
 {
@@ -65,6 +67,7 @@ class BenchmarkTools
     final public function __construct($name = '')
     {
         global $count, $js, $docroot;
+
         $count = 0;
         $js =  '';
 
@@ -84,6 +87,32 @@ class BenchmarkTools
         if (empty($name) == false) {
             $name = " for \"$name\"";
         }
+
+        if (file_exists("{$_SERVER['DOCUMENT_ROOT']}/test_clear.php")) {
+            @unlink("{$_SERVER['DOCUMENT_ROOT']}/test_clear.php");
+        }
+
+        $file = @fopen("{$_SERVER['DOCUMENT_ROOT']}/test_clear.php", 'wb');
+        @fputs(
+            $file,
+            "<?php\n" .
+            "@unlink('{$_SERVER['DOCUMENT_ROOT']}/test_auth.php');\n" .
+            "@unlink('{$_SERVER['DOCUMENT_ROOT']}/test_session.php');\n" .
+            "@unlink('{$_SERVER['DOCUMENT_ROOT']}/test_file.dat');\n" .
+            "@unlink('{$_SERVER['DOCUMENT_ROOT']}/test.dat');\n" .
+            "@unlink('{$_SERVER['DOCUMENT_ROOT']}/test_exec.php');\n" .
+            "@unlink('{$_SERVER['DOCUMENT_ROOT']}/test_upload.php');\n" .
+            "@unlink('{$_SERVER['DOCUMENT_ROOT']}/test_actual_time.php');\n" .
+            "@unlink('{$_SERVER['DOCUMENT_ROOT']}/test_actual_time_wait.php');\n" .
+            "@unlink('{$_SERVER['DOCUMENT_ROOT']}/test_actual_memory.php');\n" .
+            "@unlink('{$_SERVER['DOCUMENT_ROOT']}/test_redirect.php');\n" .
+            "@exec('rm -rf {$_SERVER['DOCUMENT_ROOT']}/test_htaccess');\n" .
+            "@exec('rm -rf {$_SERVER['DOCUMENT_ROOT']}/test_time');\n".
+            "@exec('rm -rf {$_SERVER['DOCUMENT_ROOT']}/test_dir');\n".
+            "@unlink('{$_SERVER['DOCUMENT_ROOT']}/test_clear.php');\n" .
+            '?>'
+        );
+        @fclose($file);
 
         $js = <<<HTML
 $(".panel-heading").on('click', function(e) {
@@ -299,13 +328,20 @@ HTML;
     public function draw()
     {
         global $js;
+
+        $phpself = dirname($_SERVER['PHP_SELF']);
+
         $footer = <<<HTML
         </table></div></div></div>
                 </div>
             </div>
         </div>
         <script>
-        $(document).ready(function() {
+        window.onbeforeunload = function(e) {
+            $.get("$phpself/test_clear.php");
+            return 'Who will delete all the files for testing.';
+        };
+        $( document ).ready(function() {
             $js
         });
         </script>

@@ -38,7 +38,7 @@
  * @author    Dmitry Mamontov <d.slonyara@gmail.com>
  * @copyright 2015 Dmitry Mamontov <d.slonyara@gmail.com>
  * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @since     File available since Release 1.0.0
+ * @since     File available since Release 1.0.1
  */
 namespace DmitryMamontov\Server;
 use DmitryMamontov\BenchmarkTools;
@@ -52,9 +52,9 @@ use DmitryMamontov\Server\FileSystem;
  * @author    Dmitry Mamontov <d.slonyara@gmail.com>
  * @copyright 2015 Dmitry Mamontov <d.slonyara@gmail.com>
  * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @version   Release: 1.0.0
+ * @version   Release: 1.0.1
  * @link      https://github.com/dmamontov/benchmark-tools/
- * @since     Class available since Release 1.0.0
+ * @since     Class available since Release 1.0.1
  */
 class HighLoad
 {
@@ -211,7 +211,7 @@ class HighLoad
                "function testactualtime() {\n" .
                "    $.get( \"" . dirname($_SERVER['PHP_SELF']) . "/test_actual_time_wait.php?seconds=\" + seconds, function(data) {\n" .
                "        if (data == '') {\n" .
-               "            data = 0\n" .
+               "            data = 0;\n" .
                "        }\n" .
                "        if (parseInt(seconds) >= parseInt(data)) {\n" .
                "            $('#value-$cnt').siblings('.loader').children().remove();\n" .
@@ -233,5 +233,43 @@ class HighLoad
             'value' => 0,
             'postfix' => 's'
         );
+    }
+
+    /**
+     * Checking the sending big emails.
+     * @param string $email
+     * @return array
+     * @static
+     * @final
+     */
+    final public static function SendingBigEmails($email = 'test@test.com')
+    {
+        global $count, $js;
+
+        if (Server::EmailSending() !== true) {
+            return false;
+        }
+
+        $body = str_repeat(file_get_contents(__FILE__), 10);
+        $time = Tools::getTime();
+        $mail = @mail($email, "Server Test\r\n\tmultiline subject", $body, "BCC: $email\r\n");
+        $time = round(Tools::getTime() - $time, 2);
+        $result = $mail ? true : false;
+
+        return array(
+            'value' => $result,
+            'time'  => "$time s"
+        );
+    }
+
+    /**
+     * Checking upload big files to the server.
+     * @return boolean
+     * @static
+     * @final
+     */
+    final public static function UploadsBigFile()
+    {
+        return FileSystem::FileUploads(true);
     }
 }
