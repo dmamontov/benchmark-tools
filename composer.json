@@ -3,7 +3,7 @@
     "description": "Server benchmark for all that is possible.",
     "type": "project",
     "keywords": ["Benchmark", "Server"],
-    "version": "1.0.0",
+    "version": "1.0.1",
     "license": "BSD-3-Clause",
     "homepage": "http://www.slobel.ru/",
     "authors": [
