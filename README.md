@@ -19,7 +19,7 @@ Example of use can be found in the file [example.php](https://github.com/dmamont
 
 2) Follow in the project folder:
 ```bash
-composer require dmamontov/benchmark-tools ~1.0.1
+composer require dmamontov/benchmark-tools ~1.0.2
 ```
 
 In config `composer.json` your project will be added to the library `retailcrm/api-client-php`, who settled in the folder `vendor/`. In the absence of a config file or folder with vendors they will be created.

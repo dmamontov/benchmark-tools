@@ -38,7 +38,7 @@
  * @author    Dmitry Mamontov <d.slonyara@gmail.com>
  * @copyright 2015 Dmitry Mamontov <d.slonyara@gmail.com>
  * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @since     File available since Release 1.0.1
+ * @since     File available since Release 1.0.2
  */
 namespace DmitryMamontov\Server;
 use DmitryMamontov\Tools\Tools;
@@ -50,9 +50,9 @@ use DmitryMamontov\Server\Server;
  * @author    Dmitry Mamontov <d.slonyara@gmail.com>
  * @copyright 2015 Dmitry Mamontov <d.slonyara@gmail.com>
  * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @version   Release: 1.0.1
+ * @version   Release: 1.0.2
  * @link      https://github.com/dmamontov/benchmark-tools/
- * @since     Class available since Release 1.0.1
+ * @since     Class available since Release 1.0.2
  */
 class FileSystem
 {
@@ -347,12 +347,11 @@ class FileSystem
 
     /**
      * Checking upload files to the server.
-     * @param boolean $big
      * @return boolean
      * @static
      * @final
      */
-    final public static function FileUploads($big = false)
+    final public static function FileUploads()
     {
         if (
             Server::PHPInterface() == 'cli' ||
@@ -382,9 +381,6 @@ class FileSystem
         @fclose($file);
 
         $text = 'Test upload';
-        if ($big == true) {
-            $text = str_repeat($text, 500000);
-        }
 
         $boundary = sha1(1);
         $file = "--$boundary\r\n" .

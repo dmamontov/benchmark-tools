@@ -38,7 +38,7 @@
  * @author    Dmitry Mamontov <d.slonyara@gmail.com>
  * @copyright 2015 Dmitry Mamontov <d.slonyara@gmail.com>
  * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @since     File available since Release 1.0.1
+ * @since     File available since Release 1.0.2
  */
 
 namespace DmitryMamontov;
@@ -51,9 +51,9 @@ use DmitryMamontov\Server\FileSystem;
  * @author    Dmitry Mamontov <d.slonyara@gmail.com>
  * @copyright 2015 Dmitry Mamontov <d.slonyara@gmail.com>
  * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @version   Release: 1.0.1
+ * @version   Release: 1.0.2
  * @link      https://github.com/dmamontov/benchmark-tools/
- * @since     Class available since Release 1.0.1
+ * @since     Class available since Release 1.0.2
  */
 class BenchmarkTools
 {
@@ -106,10 +106,14 @@ class BenchmarkTools
             "@unlink('{$_SERVER['DOCUMENT_ROOT']}/test_actual_time_wait.php');\n" .
             "@unlink('{$_SERVER['DOCUMENT_ROOT']}/test_actual_memory.php');\n" .
             "@unlink('{$_SERVER['DOCUMENT_ROOT']}/test_redirect.php');\n" .
+            "@unlink('{$_SERVER['DOCUMENT_ROOT']}/test_big_email.php');\n" .
+            "@unlink('{$_SERVER['DOCUMENT_ROOT']}/test_big.dat');\n" .
+            "@unlink('{$_SERVER['DOCUMENT_ROOT']}/test_big_upload.php');\n" .
+            "@unlink('{$_SERVER['DOCUMENT_ROOT']}/test_big_uploader.php');\n" .
             "@exec('rm -rf {$_SERVER['DOCUMENT_ROOT']}/test_htaccess');\n" .
             "@exec('rm -rf {$_SERVER['DOCUMENT_ROOT']}/test_time');\n".
             "@exec('rm -rf {$_SERVER['DOCUMENT_ROOT']}/test_dir');\n".
-            "@unlink('{$_SERVER['DOCUMENT_ROOT']}/test_clear.php');\n" .
+            "@unlink(__FILE__);\n" .
             '?>'
         );
         @fclose($file);
@@ -117,9 +121,11 @@ class BenchmarkTools
         $js = <<<HTML
 $(".panel-heading").on('click', function(e) {
     if ($(this).siblings('.panel-collapse').hasClass('in')) {
+        $(this).addClass('bottom');
         $(this).siblings('.panel-collapse').removeClass('in');
     } else {
         $(this).siblings('.panel-collapse').addClass('in');
+        $(this).removeClass('bottom');
     }
 });
 HTML;
@@ -179,6 +185,9 @@ HTML;
             }
             .table tr td {
                  font-weight: bold;
+            }
+            .bottom {
+                 margin-bottom: 2px;
             }
         </style>
     </head>

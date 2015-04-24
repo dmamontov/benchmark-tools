@@ -38,7 +38,7 @@
  * @author    Dmitry Mamontov <d.slonyara@gmail.com>
  * @copyright 2015 Dmitry Mamontov <d.slonyara@gmail.com>
  * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @since     File available since Release 1.0.1
+ * @since     File available since Release 1.0.2
  */
 namespace DmitryMamontov\Server;
 use DmitryMamontov\Tools\Tools;
@@ -51,9 +51,9 @@ use DmitryMamontov\Server\FileSystem;
  * @author    Dmitry Mamontov <d.slonyara@gmail.com>
  * @copyright 2015 Dmitry Mamontov <d.slonyara@gmail.com>
  * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @version   Release: 1.0.1
+ * @version   Release: 1.0.2
  * @link      https://github.com/dmamontov/benchmark-tools/
- * @since     Class available since Release 1.0.1
+ * @since     Class available since Release 1.0.2
  */
 class Http
 {
@@ -81,6 +81,46 @@ class Http
     }
 
     /**
+     * Gets real ip address of the server.
+     * @return string
+     * @static
+     * @final
+     */
+    final public static function RealIP()
+    {
+        if (
+            Server::PHPInterface() == 'cli' ||
+            function_exists('gethostbyname') == false ||
+            isset($_SERVER['HTTP_HOST']) == false
+        ) {
+            return false;
+        }
+
+        return gethostbyname($_SERVER['HTTP_HOST']);
+    }
+
+    /**
+     * Gets the protocol HTTP.
+     * @return string
+     * @static
+     * @final
+     */
+    final public static function Protocol()
+    {
+        if (Server::PHPInterface() == 'cli' || isset($_SERVER['SERVER_PROTOCOL']) == false) {
+                return false;
+        }
+
+        $protocol = $_SERVER['SERVER_PROTOCOL'];
+
+        if (stripos($protocol, '/') !== false) {
+            $protocol = @str_replace('/', ' ', $protocol);
+        }
+
+        return $protocol;
+    }
+
+    /**
      * Checks authorization via http.
      * @return boolean
      * @static
@@ -104,7 +144,7 @@ class Http
         @fputs(
             $file,
             "<?php\n" .
-            "\$remoteUser =  base64_decode(substr(\$_SERVER['REMOTE_USER'] ? \$_SERVER['REMOTE_USER'] : \$_SERVER['REDIRECT_REMOTE_USER']));\n" .
+            "\$remoteUser =  base64_decode(@substr(\$_SERVER['REMOTE_USER'] ? \$_SERVER['REMOTE_USER'] : \$_SERVER['REDIRECT_REMOTE_USER']));\n" .
             "if (\$remoteUser) {\n" .
             "    list(\$_SERVER['PHP_AUTH_USER'], \$_SERVER['PHP_AUTH_PW']) = explode(':', \$remoteUser);\n" .
             "}\n" .

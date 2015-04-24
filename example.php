@@ -38,7 +38,7 @@
  * @author    Dmitry Mamontov <d.slonyara@gmail.com>
  * @copyright 2015 Dmitry Mamontov <d.slonyara@gmail.com>
  * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @since     File available since Release 1.0.1
+ * @since     File available since Release 1.0.2
  */
     require_once 'vendor/autoload.php';
 
@@ -49,6 +49,7 @@
     use DmitryMamontov\Server\FileSystem;
     use DmitryMamontov\Server\Platform;
     use DmitryMamontov\Server\DB;
+    use DmitryMamontov\Server\Provider;
 
     $platform = new Platform;
     $b = new BenchmarkTools('Testing');
@@ -57,7 +58,24 @@
     $b->add('Name', $platform->Name(), 'Bitrix', '=', 'Found the platform.');
     $b->add('Version', $platform->Version());
     $platformdb = $platform->DB();
-    //$b->add('Platform DataBase', $platformdb);
+    $b->add('Platform DataBase', $platformdb);
+
+    $provider = new Provider();
+    $b->addHeader('Provider.');
+    $b->add('Country', $provider->Country(), null, null, 'Gets the name of the country.');
+    $b->add('Region', $provider->Region(), null, null, 'Gets the name of the region.');
+    $b->add('City', $provider->City(), null, null, 'Gets the name of the city.');
+    $b->add('Zip Code', $provider->ZipCode(), null, null, 'Gets zip code.');
+    $b->add('Latitude', $provider->Latitude(), null, null, 'Gets latitude.');
+    $b->add('Longitude', $provider->Longitude(), null, null, 'Gets longitude.');
+    $b->add('Time Zone', $provider->TimeZone(), null, null, 'Gets Time Zone.');
+    $b->add('Name', $provider->Name(), null, null, 'Gets the name of the provider.');
+    $b->add('Range IP', $provider->RangeIP(), null, null, 'Gets the range of ip.');
+    $b->add('Site', $provider->Site(), null, null, 'Gets the provider website.');
+    $b->add('Autonomous System Number', $provider->AutonomousSystemNumber(), null, null, 'Gets the autonomous system number provider.');
+    $b->add('Network', $provider->Network(), null, null, 'Gets the network provider.');
+    $b->add('Network Mask', $provider->NetworkMask(), null, null, 'Gets mask network provider.');
+    $b->add('Map', $provider->Map(), null, null, 'Will receive a link to Google Maps.');
 
     $b->addHeader('Main.');
     $b->add('PHP Interface', Server::PHPInterface(), null, null, 'Finds interface php.');
@@ -99,10 +117,12 @@
 
     $b->addHeader('Http server.');
     $b->add('Server', Http::Server(), null, null, 'Finds the current http server.');
+    $b->add('Protocol', Http::Protocol(), null, null, 'Gets the protocol HTTP.');
+    $b->add('Real IP', Http::RealIP(), null, null, 'Gets real ip address of the server.');
     $b->add('Authorization', Http::Authorization(), null, null, 'Checks authorization via http.');
     $b->add('Sessions', Http::Sessions(), null, null, 'Checks work sessions via http.');
-    $b->add('Local Redirect', Http::LocalRedirect(), null, null, 'Checks work local redirect via http.');
     $b->add('SSL', Http::SSL('www.google.com'), null, null, 'Checks operation ssl via http.');
+    $b->add('Local Redirect', Http::LocalRedirect(), null, null, 'Checks work local redirect via http.');
 
     $b->addHeader('File system.');
     $b->add('Disk Space', FileSystem::DiskSpace(), '255', '>', 'Checking disk space.');
@@ -136,7 +156,7 @@
         $b->add('Speed Insert', $db->SpeedInsert(), null, null, 'Speed test insert 1000 records.');
         $b->add('Speed Select', $db->SpeedSelect(), null, null, 'Speed test select 1000 records.');
         $b->add('Characters', $db->Characters());
-        $b->add('Count Row Tables', $db->CountRow(true));
+        $b->add('Count Records', $db->CountRow(true));
     }
 
     $b->draw();

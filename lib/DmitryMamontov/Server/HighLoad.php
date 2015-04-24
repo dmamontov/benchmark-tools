@@ -38,7 +38,7 @@
  * @author    Dmitry Mamontov <d.slonyara@gmail.com>
  * @copyright 2015 Dmitry Mamontov <d.slonyara@gmail.com>
  * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @since     File available since Release 1.0.1
+ * @since     File available since Release 1.0.2
  */
 namespace DmitryMamontov\Server;
 use DmitryMamontov\BenchmarkTools;
@@ -52,9 +52,9 @@ use DmitryMamontov\Server\FileSystem;
  * @author    Dmitry Mamontov <d.slonyara@gmail.com>
  * @copyright 2015 Dmitry Mamontov <d.slonyara@gmail.com>
  * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @version   Release: 1.0.1
+ * @version   Release: 1.0.2
  * @link      https://github.com/dmamontov/benchmark-tools/
- * @since     Class available since Release 1.0.1
+ * @since     Class available since Release 1.0.2
  */
 class HighLoad
 {
@@ -227,6 +227,11 @@ class HighLoad
                "            $('#value-$cnt').html(seconds + ' s');\n".
                "        }\n" .
                "    })\n" .
+               "    .fail(function() {\n" .
+               "        $('#value-$cnt').html('No');\n" .
+               "        $('#value-$cnt').parent('tr').addClass('danger');\n" .
+               "        clearInterval(tid);\n" .
+               "    })\n" .
                "}\n";
 
         return array(
@@ -237,39 +242,182 @@ class HighLoad
 
     /**
      * Checking the sending big emails.
+     * @param integer $size
      * @param string $email
      * @return array
      * @static
      * @final
      */
-    final public static function SendingBigEmails($email = 'test@test.com')
+    final public static function SendingBigEmails($size = 65, $email = 'test@test.com')
     {
         global $count, $js;
 
-        if (Server::EmailSending() !== true) {
+        if (
+            Server::PHPInterface() == 'cli' ||
+            Server::EmailSending() !== true ||
+            FileSystem::FileDeletion() === false
+        ) {
             return false;
         }
 
-        $body = str_repeat(file_get_contents(__FILE__), 10);
-        $time = Tools::getTime();
-        $mail = @mail($email, "Server Test\r\n\tmultiline subject", $body, "BCC: $email\r\n");
-        $time = round(Tools::getTime() - $time, 2);
-        $result = $mail ? true : false;
+        if (file_exists("{$_SERVER['DOCUMENT_ROOT']}/test_big_email.php")) {
+            @unlink("{$_SERVER['DOCUMENT_ROOT']}/test_big_email.php");
+        }
 
-        return array(
-            'value' => $result,
-            'time'  => "$time s"
+        $file = @fopen("{$_SERVER['DOCUMENT_ROOT']}/test_big_email.php", 'wb');
+        @fputs(
+            $file,
+            "<?php\n" .
+            "ini_set('display_errors', false);\n" .
+            "@error_reporting(-1);\n\n" .
+            "\$body = str_repeat(str_repeat('*', 1023) . \"\\n\", $size);\n" .
+            "\$time = explode(' ', microtime());\n" .
+            "\$time = (float) \$time[0] + (float) \$time[1];\n" .
+            "\$mail = @mail('$email', \"Server Test\\r\\n\\tmultiline subject\", \$body, \"BCC: $email\\r\\n\");\n" .
+            "\$finishtime = explode(' ', microtime());\n" .
+            "\$finishtime = (float) \$finishtime[0] + (float) \$finishtime[1];\n" .
+            "\$time = round(\$finishtime - \$time, 2);\n" .
+            "if (\$mail) {\n" .
+            "    echo \"Yes \$time s\";\n" .
+            "} else {\n" .
+            "    echo \"No\";\n" .
+            "}\n" .
+            "unlink(__FILE__)\n" .
+            '?>'
         );
+        @fclose($file);
+
+        $cnt = $count + 1;
+        $js .= "$('#value-$cnt').parent('tr').removeClass().addClass('active');\n" .
+               "$('#value-$cnt').siblings('.loader').html('<img src=\"https://www.crazydogtshirts.com/skin/frontend/mtcolias/default/images/loader.gif\"/>');\n" .
+               "$.get( \"" . dirname($_SERVER['PHP_SELF']) . "/test_big_email.php\", function(data) {\n" .
+               "    $('#value-$cnt').siblings('.loader').children().remove();\n" .
+               "    $('#value-$cnt').parent('tr').removeClass();\n" .
+               "    if (data == 'No' || data == '') {\n" .
+               "        $('#value-$cnt').html(data);\n".
+               "        $('#value-$cnt').parent('tr').addClass('danger');\n\n" .
+               "    } else {\n" .
+               "        $('#value-$cnt').html(data);\n".
+               "        $('#value-$cnt').parent('tr').addClass('success');\n\n" .
+               "    }\n" .
+               "})\n" .
+               ".fail(function() {\n" .
+               "    $('#value-$cnt').siblings('.loader').children().remove();\n" .
+               "    $('#value-$cnt').html('No');\n" .
+               "    $('#value-$cnt').parent('tr').addClass('danger');\n" .
+               "})\n";
+
+        return 'Wait';
     }
 
     /**
      * Checking upload big files to the server.
+     * @param integer $size
      * @return boolean
      * @static
      * @final
      */
-    final public static function UploadsBigFile()
+    final public static function UploadsBigFile($size = 1024)
     {
-        return FileSystem::FileUploads(true);
+        global $count, $js;
+
+        if (
+            Server::PHPInterface() == 'cli' ||
+            Server::PHPFileUploads() === false ||
+            FileSystem::FileDeletion() === false
+        ) {
+            return false;
+        }
+
+        if (file_exists("{$_SERVER['DOCUMENT_ROOT']}/test_big.dat")) {
+            @unlink("{$_SERVER['DOCUMENT_ROOT']}/test_big.dat");
+        }
+        if (file_exists("{$_SERVER['DOCUMENT_ROOT']}/test_big_upload.php")) {
+            @unlink("{$_SERVER['DOCUMENT_ROOT']}/test_big_upload.php");
+        }
+        if (file_exists("{$_SERVER['DOCUMENT_ROOT']}/test_big_uploader.php")) {
+            @unlink("{$_SERVER['DOCUMENT_ROOT']}/test_big_uploader.php");
+        }
+
+        $file = @fopen("{$_SERVER['DOCUMENT_ROOT']}/test_big_upload.php", 'wb');
+        @fputs(
+            $file,
+            "<?php\n" .
+            "if (isset(\$_FILES['filename']) && is_uploaded_file(\$_FILES['filename']['tmp_name'])) {\n" .
+            "    @move_uploaded_file(\$_FILES['filename']['tmp_name'], \$_REQUEST['root'] . '/test_big.dat');\n" .
+            "    echo file_exists(\$_REQUEST['root'] . '/test_big.dat');\n" .
+            "}\n" .
+            "@unlink(__FILE__);\n" .
+            '?>'
+        );
+        @fclose($file);
+
+        $file = @fopen("{$_SERVER['DOCUMENT_ROOT']}/test_big_uploader.php", 'wb');
+        @fputs(
+            $file,
+            "<?php\n" .
+            "ini_set('display_errors', false);\n" .
+            "@error_reporting(-1);\n\n" .
+            "\$text = str_repeat(str_repeat('*', 1023) . \"\\n\", $size);\n" .
+            "\$boundary = sha1(1);\n" .
+            "\$file = \"--\$boundary\\r\\n\" .\n" .
+            "         \"Content-Disposition: form-data; name=\\\"filename\\\"; filename=\\\"test_big.dat\\\"\\r\\n\" .\n" .
+            "         \"Content-Type: text/plain; charset=us-ascii\\r\\n\" .\n" .
+            "         \"Content-Length: \" . (1024 * $size) . \"\\r\\n\" .\n" .
+            "         \"Content-Type: application/octet-stream\\r\\n\\r\\n\" .\n" .
+            "         \"\$text\\r\\n\" .\n" .
+            "         \"--\$boundary--\";\n\n" .
+            "\$body = \"POST " . dirname($_SERVER['PHP_SELF']) . "/test_big_upload.php?root={$_SERVER['DOCUMENT_ROOT']} HTTP/1.1\\r\\n\" .\n" .
+            "         \"Host: " . Tools::getHost() . "\\r\\n\" .\n" .
+            "         \"Content-Type: multipart/form-data; boundary=\$boundary\\r\\n\" .\n" .
+            "         'Content-Length: ' . strlen(\$file) . \"\\r\\n\" .\n" .
+            "         \"Connection: Close\\r\\n\\r\\n\" .\n" .
+            "         \$file;\n\n" .
+            "if (file_exists(\"{$_SERVER['DOCUMENT_ROOT']}/test_big_upload.php\")) { \n" .
+            "    \$res = @fsockopen('" . Tools::getHost() . "', " . ($_SERVER['SERVER_PORT'] ? $_SERVER['SERVER_PORT'] : 80) . ", \$errno, \$errstr, 3);\n" .
+            "     if (\$res) {\n" .
+            "          \$time = explode(' ', microtime());\n" .
+            "          \$time = (float) \$time[0] + (float) \$time[1];\n" .
+            "          fputs(\$res, \$body);\n" .
+            "          \$result = end(explode(\"\\n\", fread(\$res, 4096)));\n" .
+            "          fclose(\$res);\n" .
+            "          \$finishtime = explode(' ', microtime());\n" .
+            "          \$finishtime = (float) \$finishtime[0] + (float) \$finishtime[1];\n" .
+            "          \$time = round(\$finishtime - \$time, 2);\n" .
+            "          echo \$result == '1' ? \"Yes \$time s\" : 'No';\n" .
+            "     } else {\n" .
+            "         echo 'No';\n" .
+            "     }\n" .
+            "} else {\n" .
+            "    echo 'No';\n" .
+            "}\n" .
+            "@unlink('{$_SERVER['DOCUMENT_ROOT']}/test_big_upload.php');\n" .
+            "@unlink('{$_SERVER['DOCUMENT_ROOT']}/test_big.dat');\n" .
+            "@unlink(__FILE__);\n" .
+            '?>'
+        );
+        @fclose($file);
+
+        $cnt = $count + 1;
+        $js .= "$('#value-$cnt').parent('tr').removeClass().addClass('active');\n" .
+               "$('#value-$cnt').siblings('.loader').html('<img src=\"https://www.crazydogtshirts.com/skin/frontend/mtcolias/default/images/loader.gif\"/>');\n" .
+               "$.get( \"" . dirname($_SERVER['PHP_SELF']) . "/test_big_uploader.php\", function(data) {\n" .
+               "    $('#value-$cnt').siblings('.loader').children().remove();\n" .
+               "    $('#value-$cnt').parent('tr').removeClass();\n" .
+               "    if (data == 'No' || data == '') {\n" .
+               "        $('#value-$cnt').html(data);\n".
+               "        $('#value-$cnt').parent('tr').addClass('danger');\n\n" .
+               "    } else {\n" .
+               "        $('#value-$cnt').html(data);\n".
+               "        $('#value-$cnt').parent('tr').addClass('success');\n\n" .
+               "    }\n" .
+               "})\n" .
+               ".fail(function() {\n" .
+               "    $('#value-$cnt').siblings('.loader').children().remove();\n" .
+               "    $('#value-$cnt').html('No');\n" .
+               "    $('#value-$cnt').parent('tr').addClass('danger');\n" .
+               "})\n";
+
+        return 'Wait';
     }
 }
