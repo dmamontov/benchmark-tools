@@ -38,7 +38,8 @@
  * @author    Dmitry Mamontov <d.slonyara@gmail.com>
  * @copyright 2015 Dmitry Mamontov <d.slonyara@gmail.com>
  * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @since     File available since Release 1.0.2
+ * @since     File available since Release 1.0.3
+ * @todo      This script is VERY load on the system.
  */
 namespace DmitryMamontov\Server;
 use DmitryMamontov\BenchmarkTools;
@@ -52,9 +53,9 @@ use DmitryMamontov\Server\FileSystem;
  * @author    Dmitry Mamontov <d.slonyara@gmail.com>
  * @copyright 2015 Dmitry Mamontov <d.slonyara@gmail.com>
  * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @version   Release: 1.0.2
+ * @version   Release: 1.0.3
  * @link      https://github.com/dmamontov/benchmark-tools/
- * @since     Class available since Release 1.0.2
+ * @since     Class available since Release 1.0.3
  */
 class HighLoad
 {
@@ -237,6 +238,104 @@ class HighLoad
         return array(
             'value' => 0,
             'postfix' => 's'
+        );
+    }
+
+    /**
+     * Number of operations of the CPU.
+     * @return array
+     * @static
+     * @final
+     */
+    final public static function NumberCpuOperations()
+    {
+        $operations = array();
+        for ($i = 0; $i < 4; $i++) {
+
+            $time = Tools::getTime();
+            for ($j = 0; $j < 1000000; $j++) {}
+            $firstResult = Tools::getTime() - $time;
+
+            $time = Tools::getTime();
+            for ($j = 0; $j < 1000000; $j++) {
+                $a++;
+                $a--;
+                $a++;
+                $a--;
+            }
+            $secondResult = Tools::getTime() - $time;
+
+            if ($secondResult > $firstResult) {
+                $operations[] = 1 / ($secondResult - $firstResult);
+            }
+        }
+
+        return array(
+            'value'   => number_format(count($operations) > 0 ? array_sum($operations) / (float) count($operations) : 0, 1),
+            'postfix' => 'MFLOPS'
+        );
+    }
+
+    /**
+     * Number of file operations.
+     * @return array
+     * @static
+     * @final
+     */
+    final public static function NumberFileOperations()
+    {
+        if (FileSystem::FolderDeletion() === false || FileSystem::FileDeletion() === false) {
+            return false;
+        }
+
+        if (file_exists("{$_SERVER['DOCUMENT_ROOT']}/test_operations")) {
+            for ($j = 0; $j < 100; $j++) {
+                @unlink("{$_SERVER['DOCUMENT_ROOT']}/test_operations/test_file_$j.php");
+            }
+            @rmdir("{$_SERVER['DOCUMENT_ROOT']}/test_operations");
+        }
+
+        $operations = array();
+
+        @mkdir("{$_SERVER['DOCUMENT_ROOT']}/test_operations");
+
+        $fileName = "{$_SERVER['DOCUMENT_ROOT']}/test_operations/test_file_#j#.php";
+        $body = "<?\$a='" . str_repeat("q", 1024) . "';?><?/*" . str_repeat("w", 1024) . "*/?><?\$b='" . str_repeat("e", 1024) . "';?>";
+
+        for ($i = 0; $i < 4; $i++) {
+
+            $time = Tools::getTime();
+            for ($j = 0; $j < 100; $j++) {
+                $file = str_replace("#j#", $j, $fileName);
+            }
+            $firstResult = Tools::getTime() - $time;
+
+            $time = Tools::getTime();
+            for ($j = 0; $j < 100; $j++) {
+                $file = str_replace("#j#", $j, $fileName);
+                $fileRes = @fopen($file, "wb");
+                @fwrite($fileRes, $body);
+                @fclose($fileRes);
+                @include($file);
+                @unlink($file);
+            }
+            $secondResult = Tools::getTime() - $time;
+
+            if ($secondResult > $firstResult) {
+                $operations[] = 100 / ($secondResult - $firstResult);
+            }
+        }
+
+        if (file_exists("{$_SERVER['DOCUMENT_ROOT']}/test_operations")) {
+            for ($j = 0; $j < 100; $j++) {
+                @unlink("{$_SERVER['DOCUMENT_ROOT']}/test_operations/test_file_$j.php");
+            }
+            @rmdir("{$_SERVER['DOCUMENT_ROOT']}/test_operations");
+        }
+
+        return array(
+            'value'   => number_format(count($operations) > 0 ? array_sum($operations) / (float) count($operations) : 0, 1, '.', ''),
+            'postfix' => 'FOPS'
         );
     }
 

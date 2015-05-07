@@ -38,7 +38,7 @@
  * @author    Dmitry Mamontov <d.slonyara@gmail.com>
  * @copyright 2015 Dmitry Mamontov <d.slonyara@gmail.com>
  * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @since     File available since Release 1.0.2
+ * @since     File available since Release 1.0.3
  */
 
 namespace DmitryMamontov;
@@ -51,9 +51,9 @@ use DmitryMamontov\Server\FileSystem;
  * @author    Dmitry Mamontov <d.slonyara@gmail.com>
  * @copyright 2015 Dmitry Mamontov <d.slonyara@gmail.com>
  * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @version   Release: 1.0.2
+ * @version   Release: 1.0.3
  * @link      https://github.com/dmamontov/benchmark-tools/
- * @since     Class available since Release 1.0.2
+ * @since     Class available since Release 1.0.3
  */
 class BenchmarkTools
 {
@@ -113,6 +113,7 @@ class BenchmarkTools
             "@exec('rm -rf {$_SERVER['DOCUMENT_ROOT']}/test_htaccess');\n" .
             "@exec('rm -rf {$_SERVER['DOCUMENT_ROOT']}/test_time');\n".
             "@exec('rm -rf {$_SERVER['DOCUMENT_ROOT']}/test_dir');\n".
+            "@exec('rm -rf {$_SERVER['DOCUMENT_ROOT']}/test_operations');\n".
             "@unlink(__FILE__);\n" .
             '?>'
         );
@@ -348,7 +349,6 @@ HTML;
         <script>
         window.onbeforeunload = function(e) {
             $.get("$phpself/test_clear.php");
-            return 'Who will delete all the files for testing.';
         };
         $( document ).ready(function() {
             $js

@@ -38,7 +38,7 @@
  * @author    Dmitry Mamontov <d.slonyara@gmail.com>
  * @copyright 2015 Dmitry Mamontov <d.slonyara@gmail.com>
  * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @since     File available since Release 1.0.2
+ * @since     File available since Release 1.0.3
  */
 namespace DmitryMamontov\Server;
 use DmitryMamontov\Tools\Tools;
@@ -50,9 +50,9 @@ use DmitryMamontov\Server\Server;
  * @author    Dmitry Mamontov <d.slonyara@gmail.com>
  * @copyright 2015 Dmitry Mamontov <d.slonyara@gmail.com>
  * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @version   Release: 1.0.2
+ * @version   Release: 1.0.3
  * @link      https://github.com/dmamontov/benchmark-tools/
- * @since     Class available since Release 1.0.2
+ * @since     Class available since Release 1.0.3
  */
 class FileSystem
 {
@@ -64,10 +64,7 @@ class FileSystem
      */
     final public static function DiskSpace()
     {
-        return array(
-            'value' => intval(@disk_free_space($_SERVER['DOCUMENT_ROOT'])/1024/1024),
-            'postfix' => 'Mb'
-        );
+        return Tools::FormatSize((@disk_free_space($_SERVER['DOCUMENT_ROOT'])/1024/1024) * 1048576);
     }
 
     /**

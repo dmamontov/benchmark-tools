@@ -38,7 +38,7 @@
  * @author    Dmitry Mamontov <d.slonyara@gmail.com>
  * @copyright 2015 Dmitry Mamontov <d.slonyara@gmail.com>
  * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @since     File available since Release 1.0.2
+ * @since     File available since Release 1.0.3
  */
 namespace DmitryMamontov\Server;
 use DmitryMamontov\Tools\Tools;
@@ -51,9 +51,9 @@ use DmitryMamontov\Server\FileSystem;
  * @author    Dmitry Mamontov <d.slonyara@gmail.com>
  * @copyright 2015 Dmitry Mamontov <d.slonyara@gmail.com>
  * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @version   Release: 1.0.2
+ * @version   Release: 1.0.3
  * @link      https://github.com/dmamontov/benchmark-tools/
- * @since     Class available since Release 1.0.2
+ * @since     Class available since Release 1.0.3
  */
 class Http
 {
@@ -273,7 +273,7 @@ class Http
     /**
      * Checks operation ssl via http.
      * @param string $domain
-     * @return mixed
+     * @return boolean
      * @static
      * @final
      */
@@ -295,17 +295,23 @@ class Http
             $result = false;
         }
 
-        if (Server::Curl()) {
-            $ver = curl_version();
-            if (isset($ver['ssl_version'])) {
-                $result = array(
-                    'value'     => $result,
-                    'separator' => '-',
-                    'version'   => $ver['ssl_version']
-                );
-            }
+        return $result;
+    }
+
+    /**
+     * Checks ssl Version.
+     * @return string|boolean
+     * @static
+     * @final
+     */
+    final public static function SSLLibVersion()
+    {
+        if (Server::Curl() === false) {
+            return false;
         }
 
-        return $result;
+        $ver = curl_version();
+
+        return isset($ver['ssl_version']) ? $ver['ssl_version'] : false;
     }
 }

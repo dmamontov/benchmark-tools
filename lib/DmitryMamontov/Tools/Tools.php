@@ -103,4 +103,66 @@ class Tools
         $time = explode(" ", microtime());
         return (float) $time[0] + (float) $time[1];
     }
+
+    /**
+     * Format Size.
+     * @param string $size
+     * @return array
+     * @static
+     * @final
+     */
+    final public static function FormatSize($size)
+    {
+        $postfix = array('b', 'Kb', 'Mb', 'Gb', 'Tb');
+
+        $position = 0;
+        while ($size >= 1024 && $position < 4) {
+            $size /= 1024;
+            $position++;
+        }
+
+        return array(
+            'value'   => round($size, 2),
+            'postfix' => $postfix[$position]
+        );
+    }
+
+    /**
+     * Un Format Size.
+     * @param string|array $size
+     * @param string $postfix
+     * @return float
+     * @static
+     * @final
+     */
+    final public static function UnFormatSize($size, $postfix = 'b')
+    {
+        if (is_array($size)) {
+            if (isset($size['value']) && isset($size['postfix'])) {
+                $postfix = $size['postfix'];
+                $size = $size['value'];
+            } else {
+                return 0;
+            }
+        }
+
+        $result = $size;
+
+        switch ($postfix) {
+            case 'Kb':
+                $result *= 1024;
+                break;
+            case 'Mb':
+                $result *= 1048576;
+                break;
+            case 'Gb':
+                $result *= 1073741824;
+                break;
+            case 'Tb':
+                $result *= 1099511627776;
+                break;
+        }
+
+        return $result;
+    }
 }
