@@ -349,6 +349,7 @@ HTML;
         <script>
         window.onbeforeunload = function(e) {
             $.get("$phpself/test_clear.php");
+            return 'Who will delete all the files for testing.';
         };
         $( document ).ready(function() {
             $js
