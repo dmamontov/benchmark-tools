@@ -10,13 +10,13 @@ It provides several classes that retrieve information of configuration of resour
 The class can compose a report and display it on a Web page
 
 Currently the classes provide information about:
-* Database support like MySQL configuration variables and speed of insertion and selection of records
-* File system support like disk space and access permissions, speed of creating files
-* Resources needed for high load applications like available memory, accessing shared memory, sending large email messages, upload large files
-* HTTP connection related resources like get the server IP address, HTTP comnnection protocol, HTTP authentication, session support
-* Server platform information like installed applications such as Wordpress, Drupal, etc., other programming languages
-* Servers ISP information like network, country, city, geographic coordinates
-* PHP server configuration like PHP version, cache extensions, available extensions
+* `Database` support like MySQL configuration variables and speed of insertion and selection of records
+* `File system` support like disk space and access permissions, speed of creating files
+* Resources needed for `high load` applications like available memory, accessing shared memory, sending large email messages, upload large files
+* `HTTP` connection related resources like get the server IP address, HTTP comnnection protocol, HTTP authentication, session support
+* Server `platform` information like installed applications such as Wordpress, Drupal, etc., other programming languages
+* `Servers ISP` information like network, country, city, geographic coordinates
+* `PHP server` configuration like PHP version, cache extensions, available extensions
 
 [Demonstration](http://slobel.ru/benchmark)
 
