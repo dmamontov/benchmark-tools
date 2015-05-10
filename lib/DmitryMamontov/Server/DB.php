@@ -41,6 +41,7 @@
  * @since     File available since Release 1.0.3
  */
 namespace DmitryMamontov\Server;
+
 use DmitryMamontov\Server\Server;
 use DmitryMamontov\Tools\Tools;
 
@@ -75,7 +76,8 @@ class DB
             $this->dbname = $dbname;
             try {
                 $this->db = new \PDO("$driver:host=$host" . (is_null($dbname) ? '' :";dbname=$dbname"), $user, $pass);
-            } catch (PDOException $e) {}
+            } catch (PDOException $e) {
+            }
         }
     }
 
@@ -307,7 +309,7 @@ class DB
         $result = false;
 
         $characters = $this->db->query("SHOW VARIABLES LIKE 'character\_set\_%'");
-        while($character = $characters->fetch(\PDO::FETCH_NUM)) {
+        while ($character = $characters->fetch(\PDO::FETCH_NUM)) {
             $result[$character[0]] = $character[1];
         }
 
@@ -334,9 +336,9 @@ class DB
             }
             $innodb = $this->db->prepare('DROP TABLE IF EXISTS test_table;');
             $innodb->execute();
-         }
+        }
 
-         return $result;
+        return $result;
     }
 
     /**

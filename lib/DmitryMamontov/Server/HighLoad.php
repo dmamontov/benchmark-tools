@@ -42,6 +42,7 @@
  * @todo      This script is VERY load on the system.
  */
 namespace DmitryMamontov\Server;
+
 use DmitryMamontov\BenchmarkTools;
 use DmitryMamontov\Tools\Tools;
 use DmitryMamontov\Server\Server;
@@ -95,7 +96,7 @@ class HighLoad
             "    exit();\n" .
             "}\n\n" .
             "\$actual = 0;\n" .
-            "while (true) {\n" . 
+            "while (true) {\n" .
             "    if (\$actual === @shm_get_var(\$shmId, 1)) {\n" .
             "        shm_remove(\$shmId);\n" .
             "        echo \$actual;\n" .
@@ -251,9 +252,9 @@ class HighLoad
     {
         $operations = array();
         for ($i = 0; $i < 4; $i++) {
-
             $time = Tools::getTime();
-            for ($j = 0; $j < 1000000; $j++) {}
+            for ($j = 0; $j < 1000000; $j++) {
+            }
             $firstResult = Tools::getTime() - $time;
 
             $time = Tools::getTime();
@@ -303,7 +304,6 @@ class HighLoad
         $body = "<?\$a='" . str_repeat("q", 1024) . "';?><?/*" . str_repeat("w", 1024) . "*/?><?\$b='" . str_repeat("e", 1024) . "';?>";
 
         for ($i = 0; $i < 4; $i++) {
-
             $time = Tools::getTime();
             for ($j = 0; $j < 100; $j++) {
                 $file = str_replace("#j#", $j, $fileName);

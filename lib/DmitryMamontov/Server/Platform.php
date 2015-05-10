@@ -41,6 +41,7 @@
  * @since     File available since Release 1.0.3
  */
 namespace DmitryMamontov\Server;
+
 use DmitryMamontov\Server\Server;
 
 /**
@@ -67,7 +68,8 @@ class Platform
      * Search platform.
      * @final
      */
-    final public function __construct(){
+    final public function __construct()
+    {
         array_push($this->platforms, 'Others');
         foreach ($this->platforms as $platform) {
             if (method_exists($this, $platform)) {
@@ -606,7 +608,6 @@ class Platform
 
             return true;
         } else {
-
             return false;
         }
     }
@@ -660,7 +661,8 @@ class Platform
                     if ($tmp = $v->fetch(\PDO::FETCH_ASSOC)) {
                         $this->version = $tmp['version'];
                     }
-                } catch (PDOException $e) {}
+                } catch (PDOException $e) {
+                }
             }
 
             return true;
@@ -715,7 +717,8 @@ class Platform
                     if ($tmp = $v->fetch(\PDO::FETCH_ASSOC)) {
                         $this->version = $tmp['version'];
                     }
-                } catch (PDOException $e) {}
+                } catch (PDOException $e) {
+                }
             }
 
             return true;
@@ -817,7 +820,8 @@ class Platform
                         if ($tmp = $v->fetch(\PDO::FETCH_ASSOC)) {
                             $this->version = reset(explode(' ', $tmp['version']));
                         }
-                    } catch (PDOException $e) {}
+                    } catch (PDOException $e) {
+                    }
                 }
 
                 return true;
@@ -946,7 +950,7 @@ class Platform
                         $this->version = trim(
                             "{$v['major']}.{$v['minor']}.{$v['revision']}" .
                             ($v['patch'] != '' ? ".{$v['patch']}" : "") .
-                            "-{$v['stability']}{$v['number']}" , '.-'
+                            "-{$v['stability']}{$v['number']}", '.-'
                             );
                     }
                 }

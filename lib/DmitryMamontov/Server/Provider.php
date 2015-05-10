@@ -41,6 +41,7 @@
  * @since     File available since Release 1.0.3
  */
 namespace DmitryMamontov\Server;
+
 use DmitryMamontov\Server\Http;
 use DmitryMamontov\Server\Server;
 

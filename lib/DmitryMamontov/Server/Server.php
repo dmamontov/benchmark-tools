@@ -354,7 +354,7 @@ class Server
      */
     final public static function Umask()
     {
-        return sprintf("%03o",umask());
+        return sprintf("%03o", umask());
     }
 
     /**

@@ -41,6 +41,7 @@
  * @since     File available since Release 1.0.2
  */
 namespace DmitryMamontov\Tools;
+
 use DmitryMamontov\Server\Server;
 
 /**

@@ -41,6 +41,7 @@
  * @since     File available since Release 1.0.3
  */
 namespace DmitryMamontov\Server;
+
 use DmitryMamontov\Tools\Tools;
 use DmitryMamontov\Server\Server;
 use DmitryMamontov\Server\FileSystem;
@@ -108,7 +109,7 @@ class Http
     final public static function Protocol()
     {
         if (Server::PHPInterface() == 'cli' || isset($_SERVER['SERVER_PROTOCOL']) == false) {
-                return false;
+            return false;
         }
 
         $protocol = $_SERVER['SERVER_PROTOCOL'];
